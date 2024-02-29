@@ -34,11 +34,6 @@ namespace ProyectoAula1_EmanuelGallego_SaraPineda
             this.ConsumoAgua1 = ConsumoAgua;
         }
 
-        public static void Main()
-        {
-            Interfaz NuevaInterfaz = new Interfaz();
-            NuevaInterfaz.Bienvenida();
-        }
     }
 }
 

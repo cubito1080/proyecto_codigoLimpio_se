@@ -6,20 +6,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace proyecto_codigoLimpio_se
+namespace ProyectoAula1_EmanuelGallego_SaraPineda
 {
     internal class Epm
     {
         private double valor_kilovatio;
         private double valor_mt3;
-        private List<Usuario> DatosDeUsuario = new();
+        private List<Usuario> DatosDeUsuario;
 
         public List<Usuario> DatosDeUsuarios { get => DatosDeUsuario; set => DatosDeUsuario = value; }
-        
+        public double Valor_kilovatio { get => valor_kilovatio; set => valor_kilovatio = value; }
+        public double Valor_mt3 { get => valor_mt3; set => valor_mt3 = value; }
+
         public Epm()
         {
-            this.valor_kilovatio = 80;
-            this.valor_mt3 = 4600;
+            this.Valor_kilovatio = 80;
+            this.Valor_mt3 = 4600;
+            this.DatosDeUsuario = new List<Usuario>();
         }
 
         public void AgregarCliente(Usuario usuario)
@@ -29,13 +32,13 @@ namespace proyecto_codigoLimpio_se
 
         public double CalcularValorParcialEnergia(double kilovatios_consumidos)
         {
-            double valor_parcial_energia = kilovatios_consumidos * valor_kilovatio;
+            double valor_parcial_energia = kilovatios_consumidos * Valor_kilovatio;
             return valor_parcial_energia;
         }
 
         public double CalcularValorIncentivoEnergia(double meta_energia, double kilovatios_consumidos)
         {
-            double valor_incentivo = (meta_energia - kilovatios_consumidos) * valor_kilovatio;
+            double valor_incentivo = (meta_energia - kilovatios_consumidos) * Valor_kilovatio;
             return valor_incentivo;
         }
 
@@ -50,7 +53,7 @@ namespace proyecto_codigoLimpio_se
 
         public double CalcularValorParcialAgua(double mt3_consumidos)
         {
-            double valor_parcial_agua = mt3_consumidos * valor_mt3;
+            double valor_parcial_agua = mt3_consumidos * Valor_mt3;
             return valor_parcial_agua;
         }
 
@@ -75,7 +78,7 @@ namespace proyecto_codigoLimpio_se
             return valor_total;
         }
 
-        public double CacularPromedioConsumoDeEnergia(Usuario usuario)
+        public double CacularPromedioConsumoDeEnergia()
         {
             double sumatoria = 0;
 
@@ -88,8 +91,70 @@ namespace proyecto_codigoLimpio_se
             return promedio;
         }
 
-        
+        public double CalcularTotalDescuentosPorIncentivoDeEnergia()
+        {
+            double descuento_total_incentivo = 0;
+            foreach (Usuario usuario in DatosDeUsuario)
+            {
+                if (usuario.MetaAhorroEnergia1 > usuario.ConsumoEnergia1)
+                {
+                    descuento_total_incentivo += CalcularValorIncentivoEnergia(usuario.MetaAhorroEnergia1, usuario.ConsumoEnergia1);
+                }
+
+            }
+
+            return descuento_total_incentivo;
         }
 
+        public double CalcularTotalM3AguaEncimaPromedio()
+        {
+            double m3_agua_encima_promedio = 0;
+
+            foreach (Usuario usuario in DatosDeUsuario)
+            {
+                if (usuario.ConsumoAgua1 > usuario.PromedioConsumoAgua1)
+                {
+                    m3_agua_encima_promedio += usuario.ConsumoAgua1 - usuario.PromedioConsumoAgua1;
+                }
+
+            }
+            return m3_agua_encima_promedio;
+        }
+
+        public double CalcularClientesConConsumoAguaMayorAlPromedio()
+        {
+            double clientes_consumo_agua_encima_promedio = 0;
+
+            foreach (Usuario usuario in DatosDeUsuario)
+            {
+                if (usuario.ConsumoAgua1 > usuario.PromedioConsumoAgua1)
+                {
+                    clientes_consumo_agua_encima_promedio += 1;
+                }
+
+            }
+            return clientes_consumo_agua_encima_promedio;
+        }
+
+        public double ConusltarPorcentajeConsumoAguaPorEstrato(int estrato)
+        {
+            double suma_total_exceso_agua_ = CalcularTotalM3AguaEncimaPromedio();
+            double suma_exceso_agua_por_estrato = 0;
+
+            foreach (Usuario usuario in DatosDeUsuario)
+            {
+                if (usuario.Estrato == estrato)
+                {
+                    suma_exceso_agua_por_estrato += CalcularValorExcesoAgua(usuario.ConsumoAgua1, usuario.PromedioConsumoAgua1);
+                }
+
+            }
+
+            return (suma_total_exceso_agua_ / suma_exceso_agua_por_estrato) * 100;
+        }
+
+
     }
+
+ 
 }
